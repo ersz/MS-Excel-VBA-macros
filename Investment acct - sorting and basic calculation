@@ -1,0 +1,70 @@
+Sub invcalc
+
+Dim lastrow As Long
+Dim hcol As Long
+Dim lastcol As Long
+Dim ff As Variant
+
+
+lastrow = Cells.SpecialCells(xlLastCell).Row    ' finding the last row in the spreadsheet
+lastcol = Cells.SpecialCells(xlLastCell).Column    ' finding the last column in the spreadsheet
+
+
+    Cells.Select
+    Cells.EntireColumn.AutoFit
+    ActiveWorkbook.Worksheets("Realized_Gain_Loss_Account_XXXX").sort.SortFields. _
+        Clear
+    ActiveWorkbook.Worksheets("Realized_Gain_Loss_Account_XXXX").sort.SortFields. _
+        Add Key:=Range("E:E"), SortOn:=xlSortOnValues, Order:=xlAscending, _
+        DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("Realized_Gain_Loss_Account_X936").sort
+        .SetRange Range("A:I")
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    Range("E1").Select
+    
+ For hcol = 1 To lastcol
+     If Cells(1, hcol).Value = "Short Term Gain/Loss" Then
+        ff = hcol
+        Exit For
+     End If
+     Next
+     
+Cells(lastrow + 1, ff).Value = "=SUM(H2:H" & lastrow & ")"
+Cells(lastrow + 1, ff + 1).Value = "=SUM(I2:I" & lastrow & ")"
+Cells(lastrow + 1, ff + 1).Select
+Selection.NumberFormat = "$#,##0.00"
+Cells(lastrow + 2, ff + 1).Select
+ActiveCell.FormulaR1C1 = "=SUM(R[-1]C[0]:R[-1]C[-1])"
+Range(Cells(lastrow + 2, ff), Cells(lastrow + 2, ff + 1)).merge
+Range(Cells(lastrow + 1, ff), Cells(lastrow + 2, ff + 1)).Select
+Selection.Font.Bold = True
+Cells(lastrow + 2, ff + 1).Select
+
+With Selection
+        .HorizontalAlignment = xlRight
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = True
+    End With
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = True
+    End With
+End Sub
